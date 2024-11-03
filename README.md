@@ -1,6 +1,9 @@
 # SnapBasket 📸🛒
 ## Organize Your Shopping Effortlessly and Intelligently
 
+<img src="assets/LogoSnapBasket.jpg" alt="Logo App SnapBasket" width="200"/>
+
+
 ### Application Overview
 SnapBasket is a mobile application designed to streamline and enhance the daily shopping experience. With SnapBasket, users can scan their receipts, track expenses, create personalized shopping lists, manage budgets, and minimize food waste. The app provides users with valuable insights and data-driven recommendations to make smarter purchasing decisions.
 
