@@ -2,5 +2,22 @@
     "cSpell.words": [
         "snapbasket"
     ],
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "xprotocol",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 33060,
+            "driver": "MySQL",
+            "name": "MySnapBasket",
+            "database": "snapbasket_db",
+            "username": "root",
+            "connectionTimeout": 50,
+            "password": "Prova123!?"
+        }
+    ]
 }
