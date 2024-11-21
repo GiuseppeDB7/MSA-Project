@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         onTabChange: (index) => navigateBottomBar(index),
       ),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey[300],
         elevation: 0,
         leading: Builder(
           builder: (context) {
@@ -122,11 +122,13 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(left: 25.0, bottom: 25),
                   child: ListTile(
                     leading: const Icon(Icons.logout, color: Colors.white),
-                    title: const Text('Logout', style: TextStyle(color: Colors.white)),
+                    title: const Text('Logout',
+                        style: TextStyle(color: Colors.white)),
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const IntroPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const IntroPage()),
                       );
                     }, // TODO dare conferma prima di effettuare il logout
                   ),
@@ -148,7 +150,8 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.only(left: 25.0),
                   child: ListTile(
                     leading: Icon(Icons.settings, color: Colors.white),
-                    title: Text('Settings', style: TextStyle(color: Colors.white)),
+                    title:
+                        Text('Settings', style: TextStyle(color: Colors.white)),
                   ),
                 ),
               ],
