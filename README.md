@@ -64,37 +64,10 @@ SnapBasket is here to make grocery shopping easier, more organized, and cost-eff
 
 
 ### Technologies Used
-- **Backend: Java Spring Boot** 
-- **Frontend: Flutter** 
-- **Database: MySql** 
+- **Backend + Database: Firebase** 
+- **Frontend: Flutter**
 - **OCR for Receipt Scanning:** 
 - **Data Visualization:** 
-
-## Backend Dependencies
-
-Di seguito sono elencate le dipendenze principali utilizzate nel progetto Spring Boot, con una descrizione del loro scopo.
-
-1. **Spring Web**  
-   Questa dipendenza fornisce il supporto per la creazione di applicazioni web, incluse applicazioni RESTful, utilizzando il framework Spring MVC. Utilizza Apache Tomcat come server integrato, consentendo di eseguire il progetto come un'applicazione standalone.
-
-2. **Spring Data JPA**  
-   Permette di interagire con database SQL utilizzando l'API di persistenza Java (JPA) e il framework Hibernate. Fornisce un livello di astrazione per operazioni CRUD e altre operazioni di database, semplificando la gestione dei dati e delle entità.
-
-3. **MySQL Driver**  
-   Questo driver consente al progetto di connettersi e interagire con un database MySQL. È essenziale per stabilire una connessione JDBC tra l'applicazione Spring Boot e il database MySQL.
-
-4. **Spring Security**  
-   Un framework personalizzabile per l'autenticazione e il controllo degli accessi. Fornisce meccanismi per proteggere l'applicazione, come autenticazione tramite credenziali e autorizzazione basata sui ruoli, permettendo di definire politiche di accesso a risorse e endpoint.
-
-5. **Validation**  
-   Fornisce strumenti di validazione dei dati in collaborazione con Hibernate Validator. Permette di applicare vincoli sui dati di input (ad esempio, valori obbligatori, lunghezza massima/minima) e di garantire che le richieste contengano dati validi prima di essere elaborate.
-
-6. **Spring Cache Abstraction**  
-   Consente di implementare meccanismi di caching per migliorare le prestazioni dell'applicazione. Con questa dipendenza, è possibile salvare in cache i risultati di operazioni frequenti, riducendo il carico sul database e migliorando la velocità di risposta dell'applicazione.
-
-7. **WebSocket**  
-   Fornisce il supporto per comunicazioni bidirezionali in tempo reale tra client e server tramite WebSocket. È utile per implementare notifiche push, aggiornamenti live e altre funzionalità che richiedono comunicazioni asincrone e a bassa latenza.
-
 
 
 ### License

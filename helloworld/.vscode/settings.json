@@ -1,0 +1,12 @@
+{
+    "java.compile.nullAnalysis.mode": "disabled",
+    "dart.closingLabels": true,
+    "cSpell.words": [
+        "ARGB",
+        "bianco",
+        "helloworld",
+        "scarpe",
+        "uomo"
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive",
+}
