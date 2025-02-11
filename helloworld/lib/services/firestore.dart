@@ -1,36 +1,75 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestoreService {
-  //get collection of lists
   final CollectionReference lists =
       FirebaseFirestore.instance.collection('lists');
 
-  //CREATE: add a new list in database
-  Future<void> addList(String name, String description, double budget) {
-    return lists.add({
-      'list': name,
-      'description': description,
-      'budget': budget,
-      'timestamp': Timestamp.now(),
-    });
+  Future<void> addList(String name, String description, double budget) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw 'User not authenticated';
+
+      await lists.add({
+        'name': name,
+        'description': description,
+        'budget': budget,
+        'userId': user.uid,
+        'createdAt': Timestamp.now(),
+      });
+    } catch (e) {
+      throw 'Error creating list: ${e.toString()}';
+    }
   }
 
-  //READ: get lists from database
+  // Get current user's lists
   Stream<QuerySnapshot> getListsStream() {
-    final listsStream =
-        lists.orderBy('timestamp', descending: true).snapshots();
-    return listsStream;
-  }
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return const Stream.empty();
 
-  //UPDATE: update lists from a doc id
-  Future<void> updateList(String docId, String description) {
     return lists
-        .doc(docId)
-        .update({'description': description, 'timestamp': Timestamp.now()});
+        .where('userId', isEqualTo: user.uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
   }
 
-  //DELETE: delete lists from a doc id
-  Future<void> deleteList(String docId) {
-    return lists.doc(docId).delete();
+  // Update list method
+  Future<void> updateList(String docID, String newDescription) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw 'User not authenticated';
+
+      final doc = await lists.doc(docID).get();
+      if (!doc.exists) throw 'List not found';
+
+      final data = doc.data() as Map<String, dynamic>;
+      if (data['userId'] != user.uid)
+        throw 'You don\'t have permission to modify this list';
+
+      await lists.doc(docID).update({
+        'description': newDescription,
+      });
+    } catch (e) {
+      throw 'Error updating list: ${e.toString()}';
+    }
+  }
+
+  // Delete list method
+  Future<void> deleteList(String docID) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw 'User not authenticated';
+
+      final doc = await lists.doc(docID).get();
+      if (!doc.exists) throw 'List not found';
+
+      final data = doc.data() as Map<String, dynamic>;
+      if (data['userId'] != user.uid)
+        throw 'You don\'t have permission to delete this list';
+
+      await lists.doc(docID).delete();
+    } catch (e) {
+      throw 'Error deleting list: ${e.toString()}';
+    }
   }
 }

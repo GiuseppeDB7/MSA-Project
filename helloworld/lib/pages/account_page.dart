@@ -1,8 +1,79 @@
 import 'package:flutter/material.dart';
 import 'package:helloworld/pages/frame_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
+
+  // Funzione per ottenere i dati dell'utente
+  Future<DocumentSnapshot> getUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .get();
+  }
+
+  // Metodo per aggiornare i dati dell'utente
+  Future<void> updateUserField(String field, dynamic value) async {
+    final user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user!.uid)
+        .update({field: value});
+  }
+
+  // Metodo per mostrare il dialog di modifica
+  void showEditDialog(BuildContext context, String field, String currentValue) {
+    final TextEditingController controller =
+        TextEditingController(text: currentValue);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Edit $field'),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(hintText: 'Enter new $field'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                // Gestione speciale per l'età (conversione in int)
+                final value = field == 'age'
+                    ? int.parse(controller.text)
+                    : controller.text;
+
+                await updateUserField(field, value);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  // Aggiorna la pagina
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AccountPage()),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                }
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,118 +102,122 @@ class AccountPage extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(25.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Sezione Profilo
-              Center(
+      body: FutureBuilder<DocumentSnapshot>(
+        future: getUserData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          if (snapshot.hasData) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.grey,
-                      child: Icon(
-                        Icons.person,
-                        size: 50,
-                        color: Colors.white,
+                    // Sezione Profilo
+                    Center(
+                      child: Column(
+                        children: [
+                          const CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.grey,
+                            child: Icon(
+                              Icons.person,
+                              size: 50,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "${userData['firstName']} ${userData['lastName']}",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 20),
+
+                    // Sezione Informazioni Personali
                     const Text(
-                      "Username", // Da sostituire con dati Firebase
+                      "User preferences",
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      "email@example.com", // Da sostituire con dati Firebase
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[600],
+                    const SizedBox(height: 10),
+                    ListTile(
+                      leading: const Icon(Icons.email),
+                      title: const Text("Email"),
+                      subtitle: Text(userData['email']),
+                      // Rimossi trailing e onTap per disabilitare la modifica
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.calendar_today),
+                      title: const Text("Age"),
+                      subtitle: Text("${userData['age']} years"),
+                      trailing: const Icon(Icons.edit),
+                      onTap: () => showEditDialog(
+                          context, 'age', userData['age'].toString()),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.phone),
+                      title: const Text("Phone"),
+                      subtitle: Text(userData['phone'] ?? "+39 XXX XXX XXXX"),
+                      trailing: const Icon(Icons.edit),
+                      onTap: () => showEditDialog(
+                          context, 'phone', userData['phone'] ?? ""),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.location_on),
+                      title: const Text("Address"),
+                      subtitle: Text(userData['address'] ?? "Via Example, 123"),
+                      trailing: const Icon(Icons.edit),
+                      onTap: () => showEditDialog(
+                          context, 'address', userData['address'] ?? ""),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Pulsante Delete Profile
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.all(15),
+                          backgroundColor:
+                              const Color.fromARGB(255, 206, 19, 6),
+                        ),
+                        onPressed: () {
+                          // Da implementare
+                        },
+                        child: const Text(
+                          "Delete profile",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 30),
+            );
+          }
 
-              // Sezione Informazioni Personali
-              const Text(
-                "User preferences",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 15),
-              ListTile(
-                leading: const Icon(Icons.phone),
-                title: const Text("Phone"),
-                subtitle: const Text(
-                    "+39 XXX XXX XXXX"), // Da sostituire con dati Firebase
-                trailing: const Icon(Icons.edit),
-                onTap: () {
-                  // Azione per modificare il numero di telefono
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.location_on),
-                title: const Text("Address"),
-                subtitle: const Text(
-                    "Via Example, 123"), // Da sostituire con dati Firebase
-                trailing: const Icon(Icons.edit),
-                onTap: () {
-                  // Azione per modificare l'indirizzo
-                },
-              ),
-
-              const SizedBox(height: 15),
-
-              // Sezione Preferenze
-              const Text(
-                "Preferences",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              ListTile(
-                leading: const Icon(Icons.sync),
-                title: const Text("Auto update"),
-                trailing: Switch(
-                  value: false, // Da sostituire con dati Firebase
-                  onChanged: (value) {
-                    // Aggiorna preferenza sincronizzazione
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              // Pulsante Modifica Profilo
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(15),
-                    backgroundColor: Colors.black,
-                  ),
-                  onPressed: () {
-                    // Azione per modificare il profilo
-                  },
-                  child: const Text(
-                    "Edit profile",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+          return const Center(child: Text('No user data found'));
+        },
       ),
     );
   }
