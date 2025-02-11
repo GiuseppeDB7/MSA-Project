@@ -1,36 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:helloworld/models/item.dart';
 
-class Cart extends ChangeNotifier{
-  //list Items for sale
-  List<Item> ItemShop = [
+class Cart extends ChangeNotifier {
+  List<Item> itemShop = [
     Item(
-      name: 'TEXT', 
-      price: 'number', 
+      name: 'TEXT',
+      price: 'number',
       description: 'Description',
       imagePath: 'lib/assets/white.png',
-      ),
-
-      Item(
-      name: 'TEXT', 
-      price: 'number', 
+    ),
+    Item(
+      name: 'TEXT',
+      price: 'number',
       description: 'Description',
       imagePath: 'lib/assets/white.png',
-      ),
-
-      Item(
-      name: 'TEXT', 
-      price: 'number', 
+    ),
+    Item(
+      name: 'TEXT',
+      price: 'number',
       description: 'Description',
       imagePath: 'lib/assets/white.png',
-      ),
-
-      Item(
-      name: 'TEXT', 
-      price: 'number', 
+    ),
+    Item(
+      name: 'TEXT',
+      price: 'number',
       description: 'Description',
       imagePath: 'lib/assets/white.png',
-      ),
+    ),
   ];
 
   //list items in cart
@@ -38,7 +34,7 @@ class Cart extends ChangeNotifier{
 
   //get list of Items for sale
   List<Item> getItemList() {
-    return ItemShop;
+    return itemShop;
   }
 
   //get cart
@@ -47,14 +43,14 @@ class Cart extends ChangeNotifier{
   }
 
   //add to cart
-  void addItemToCart(Item Item){
-    userCart.add(Item);
+  void addItemToCart(Item item) {
+    userCart.add(item);
     notifyListeners();
   }
 
   //remove from cart
-  void removeItemByCart(Item Item){
-    userCart.remove(Item);
+  void removeItemByCart(Item item) {
+    userCart.remove(item);
     notifyListeners();
   }
 }

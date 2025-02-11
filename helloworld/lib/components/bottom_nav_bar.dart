@@ -20,16 +20,16 @@ class MyBottomNavBar extends StatelessWidget {
         tabBorderRadius: 12,
         gap: 6,
         onTabChange: (value) => onTabChange!(value),
-        tabs: const[
+        tabs: const [
           GButton(
             padding: EdgeInsets.all(7),
             icon: Icons.home,
             text: 'Home',
-            ),
+          ),
           GButton(
             padding: EdgeInsets.all(7),
             icon: Icons.checklist_rounded, //TODO cambiare icona in 3 righe
-            text: 'Lists', 
+            text: 'Lists',
           ),
           GButton(
             padding: EdgeInsets.all(7),
@@ -39,12 +39,12 @@ class MyBottomNavBar extends StatelessWidget {
           GButton(
             padding: EdgeInsets.all(7),
             icon: Icons.euro_rounded, //TODO cambiare icona
-            text: 'Budget', 
+            text: 'Budget',
           ),
           GButton(
-          padding: EdgeInsets.all(7),
+            padding: EdgeInsets.all(7),
             icon: Icons.receipt_long_rounded,
-            text: 'Receipts', 
+            text: 'Receipts',
           ),
         ],
       ),
