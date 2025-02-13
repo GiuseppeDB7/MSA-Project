@@ -20,13 +20,14 @@ class ListPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'My Lists', // Modificato
+          'My Lists',
           style: TextStyle(
-            color: Colors.black,
+            color: Colors.black87,
             fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        automaticallyImplyLeading: false, // Rimuove il tasto indietro
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder<bool>(
         future: _checkUser(),
@@ -36,12 +37,28 @@ class ListPage extends StatelessWidget {
           }
 
           if (!userSnapshot.hasData || !userSnapshot.data!) {
-            return const Center(
-              child: Text(
-                'Unauthorized access', // Modificato
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 18,
+            return Center(
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  'Unauthorized access',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             );
@@ -56,9 +73,27 @@ class ListPage extends StatelessWidget {
                   // Gestione degli errori
                   if (snapshot.hasError) {
                     return Center(
-                      child: Text(
-                        'An error occurred: ${snapshot.error}', // Modificato
-                        style: const TextStyle(color: Colors.red),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Text(
+                          'An error occurred: ${snapshot.error}',
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     );
                   }
@@ -70,12 +105,28 @@ class ListPage extends StatelessWidget {
 
                   // Verifica se ci sono dati
                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        "No lists found...", // Modificato
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 18,
+                    return Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: const Text(
+                          "No lists found...",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     );
@@ -89,51 +140,81 @@ class ListPage extends StatelessWidget {
                       final data = document.data() as Map<String, dynamic>;
                       final docID = document.id;
 
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        elevation: 2,
+                      return Container(
+                        margin: const EdgeInsets.only(
+                            bottom: 10), // Ridotto da 15 a 10
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF000000), Color(0xFF434343)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              spreadRadius: 2,
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
                         child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 10), // Modificato il padding verticale
                           title: Text(
-                            data['name'] ?? 'Untitled', // Modificato
+                            data['name'] ?? 'No name',
                             style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(data['description'] ??
-                                  'No description'), // Modificato
+                              const SizedBox(height: 4), // Ridotto da 8 a 4
+                              Text(
+                                data['description'] ?? 'No description',
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.7),
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 4), // Ridotto da 8 a 4
                               Text(
                                 'Budget: €${(data['budget'] as num).toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                 ),
                               ),
                             ],
                           ),
-                          trailing: SizedBox(
-                            width: 96,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () => _showEditDialog(
-                                    context,
-                                    docID,
-                                    data['description'] ?? '',
-                                  ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit,
+                                    color: Colors.white70),
+                                onPressed: () => _showEditDialog(
+                                  context,
+                                  docID,
+                                  data['description'] ?? '',
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () => _showDeleteDialog(
-                                    context,
-                                    docID,
-                                    data['name'] ?? 'questa lista',
-                                  ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete,
+                                    color: Colors.white70),
+                                onPressed: () => _showDeleteDialog(
+                                  context,
+                                  docID,
+                                  data['name'] ?? 'questa lista',
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                           onTap: () {
                             // TODO: Implementare l'apertura della lista

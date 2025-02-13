@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:helloworld/firebase_options.dart';
 import 'package:helloworld/models/home.dart';
 import 'package:helloworld/pages/main_page.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart'; // Aggiungi questo import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,9 +16,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => Cart(),
-      builder: (context, child) => const MaterialApp(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => Cart()),
+      ],
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: MainPage(),
       ),

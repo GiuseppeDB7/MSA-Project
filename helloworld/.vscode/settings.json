@@ -18,5 +18,6 @@
     ],
     "java.jdt.ls.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.14.7-hotspot\\",
     "cmake.sourceDirectory": "C:/Users/giuse/OneDrive/Desktop/Romania_Uni/Mobile System/SnapBasket/helloworld/build/windows/x64/extracted/firebase_cpp_sdk_windows",
-    "postman.settings.dotenv-detection-notification-visibility": false
+    "postman.settings.dotenv-detection-notification-visibility": false,
+    "cmake.ignoreCMakeListsMissing": true
 }
