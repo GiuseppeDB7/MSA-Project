@@ -6,10 +6,34 @@ import 'package:firebase_auth/firebase_auth.dart';
 class ReceiptsPage extends StatelessWidget {
   const ReceiptsPage({super.key});
 
+  Future<void> _deleteReceipt(BuildContext context, String docId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('receipts')
+          .doc(docId)
+          .delete();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Scontrino eliminato con successo'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Errore durante l\'eliminazione'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
+      extendBodyBehindAppBar: true, // Aggiunto per evitare la fascia scura
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -76,8 +100,10 @@ class ReceiptsPage extends StatelessWidget {
                 try {
                   final data = doc.data() as Map<String, dynamic>;
                   print('Document data: $data'); // Debug print
-                  final createdAt = (data['createdAt'] as Timestamp).toDate();
-                  final monthKey = DateFormat('MMMM yyyy').format(createdAt);
+                  final receiptDate = (data['date'] as Timestamp?)?.toDate() ??
+                      (data['createdAt'] as Timestamp)
+                          .toDate(); // fallback a createdAt
+                  final monthKey = DateFormat('MMMM yyyy').format(receiptDate);
 
                   if (!groupedReceipts.containsKey(monthKey)) {
                     groupedReceipts[monthKey] = [];
@@ -88,6 +114,28 @@ class ReceiptsPage extends StatelessWidget {
                   continue;
                 }
               }
+
+              // Dopo aver popolato groupedReceipts, ordina i documenti per data
+              for (var monthKey in groupedReceipts.keys) {
+                groupedReceipts[monthKey]!.sort((a, b) {
+                  final aData = a.data() as Map<String, dynamic>;
+                  final bData = b.data() as Map<String, dynamic>;
+                  final aDate = (aData['date'] as Timestamp?)?.toDate() ??
+                      (aData['createdAt'] as Timestamp).toDate();
+                  final bDate = (bData['date'] as Timestamp?)?.toDate() ??
+                      (bData['createdAt'] as Timestamp).toDate();
+                  return bDate.compareTo(
+                      aDate); // Ordine decrescente (più recente prima)
+                });
+              }
+
+              // Ordina anche le chiavi dei mesi per avere i mesi più recenti in alto
+              final sortedEntries = groupedReceipts.entries.toList()
+                ..sort((a, b) {
+                  final aDate = DateFormat('MMMM yyyy').parse(a.key);
+                  final bDate = DateFormat('MMMM yyyy').parse(b.key);
+                  return bDate.compareTo(aDate); // Ordine decrescente
+                });
 
               // Verifichiamo se abbiamo dati da mostrare
               if (groupedReceipts.isEmpty) {
@@ -125,7 +173,8 @@ class ReceiptsPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 25.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: groupedReceipts.entries.map((entry) {
+                    children: sortedEntries.map((entry) {
+                      // Usa sortedEntries invece di groupedReceipts.entries
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -142,15 +191,18 @@ class ReceiptsPage extends StatelessWidget {
                           ...entry.value.map((doc) {
                             try {
                               final data = doc.data() as Map<String, dynamic>;
-                              final createdAt =
-                                  (data['createdAt'] as Timestamp).toDate();
+                              final receiptDate =
+                                  (data['date'] as Timestamp?)?.toDate() ??
+                                      (data['createdAt'] as Timestamp).toDate();
                               final total =
                                   (data['total'] as num?)?.toDouble() ?? 0.0;
                               final fullText =
                                   data['fullText'] as String? ?? 'Nessun testo';
 
+                              // Modifica il Container della receipt
                               return Container(
-                                margin: const EdgeInsets.only(bottom: 10),
+                                margin: const EdgeInsets.only(
+                                    bottom: 8), // Ridotto da 10 a 8
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     colors: [
@@ -171,13 +223,17 @@ class ReceiptsPage extends StatelessWidget {
                                   ],
                                 ),
                                 child: ListTile(
-                                  contentPadding: const EdgeInsets.all(16),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical:
+                                          8), // Ridotto il padding verticale
                                   title: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        DateFormat('d MMMM').format(createdAt),
+                                        DateFormat('d MMMM')
+                                            .format(receiptDate),
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 16,
@@ -198,7 +254,8 @@ class ReceiptsPage extends StatelessWidget {
                                     ],
                                   ),
                                   subtitle: Padding(
-                                    padding: const EdgeInsets.only(top: 8),
+                                    padding: const EdgeInsets.only(
+                                        top: 4), // Ridotto da 8 a 4
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -213,19 +270,57 @@ class ReceiptsPage extends StatelessWidget {
                                             fontSize: 14,
                                           ),
                                         ),
-                                        Text(
-                                          DateFormat('HH:mm').format(createdAt),
-                                          style: TextStyle(
-                                            color:
-                                                Colors.white.withOpacity(0.7),
-                                            fontSize: 14,
+                                        IconButton(
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                          icon: const Icon(
+                                            Icons.delete_outline,
+                                            color: Colors
+                                                .white, // Cambiato da white70 a white
+                                            size: 20,
                                           ),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Conferma eliminazione'),
+                                                  content: const Text(
+                                                      'Sei sicuro di voler eliminare questo scontrino?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.of(context)
+                                                              .pop(),
+                                                      child:
+                                                          const Text('Annulla'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        _deleteReceipt(
+                                                            context, doc.id);
+                                                      },
+                                                      child: const Text(
+                                                        'Elimina',
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),
                                   ),
                                   leading: Container(
-                                    padding: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(
+                                        6), // Ridotto da 8 a 6
                                     decoration: BoxDecoration(
                                       color: Colors.white.withOpacity(0.2),
                                       borderRadius: BorderRadius.circular(12),

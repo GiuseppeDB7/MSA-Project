@@ -72,140 +72,152 @@ class _FramePageState extends State<FramePage> {
             child: Text(
               "SnapBasket",
               style: TextStyle(
-                fontSize: 40,
-                fontFamily: "Times New Roman",
+                fontSize: 40, // Ridotto da 40 per migliore leggibilità
+                fontFamily: "Poppins",
                 fontWeight: FontWeight.w600,
+                letterSpacing: -0.5, // Aggiunto per migliorare la leggibilità
+                color: Colors.black87, // Aggiunto per un contrasto migliore
               ),
             ),
           ),
         ),
       ),
       drawer: Drawer(
-        backgroundColor: Colors.black,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              children: [
-                DrawerHeader(
-                  child: Image.asset('lib/assets/logo.png'),
-                ),
-                const Text(
-                  "SnapBasket",
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontFamily: "Times New Roman",
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.person, color: Colors.white),
-                    title: const Text('Account',
-                        style: TextStyle(color: Colors.white)),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AccountPage()),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.settings, color: Colors.white),
-                    title: const Text('Settings',
-                        style: TextStyle(color: Colors.white)),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const SettingsPage()),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0),
-                  child: ListTile(
-                    leading: const Icon(Icons.info, color: Colors.white),
-                    title: const Text('About',
-                        style: TextStyle(color: Colors.white)),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const InfoPage()),
-                      );
-                    },
-                  ),
-                ),
-              ],
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF000000), Color(0xFF434343)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 25.0, bottom: 25),
-                  child: ListTile(
-                    leading: const Icon(Icons.logout, color: Colors.white),
-                    title: const Text('Logout',
-                        style: TextStyle(color: Colors.white)),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Logout confirm'),
-                            content:
-                                const Text('Are you sure you want to logout?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context); // Chiude il dialog
-                                },
-                                child: const Text('Back'),
-                              ),
-                              TextButton(
-                                onPressed: () async {
-                                  try {
-                                    await FirebaseAuth.instance.signOut();
-                                    if (mounted) {
-                                      Navigator.pop(
-                                          context); // Chiude il dialog
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginPage(), // Corretto l'indentazione
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                children: [
+                  DrawerHeader(
+                    child: Image.asset('lib/assets/logo.png'),
+                  ),
+                  const Text(
+                    "SnapBasket",
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.5,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: ListTile(
+                      leading: const Icon(Icons.person, color: Colors.white),
+                      title: const Text('Account',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const AccountPage()),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: ListTile(
+                      leading: const Icon(Icons.settings, color: Colors.white),
+                      title: const Text('Settings',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SettingsPage()),
+                        );
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: ListTile(
+                      leading: const Icon(Icons.info, color: Colors.white),
+                      title: const Text('About',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const InfoPage()),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0, bottom: 25),
+                    child: ListTile(
+                      leading: const Icon(Icons.logout, color: Colors.white),
+                      title: const Text('Logout',
+                          style: TextStyle(color: Colors.white)),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Logout confirm'),
+                              content: const Text(
+                                  'Are you sure you want to logout?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context); // Chiude il dialog
+                                  },
+                                  child: const Text('Back'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    try {
+                                      await FirebaseAuth.instance.signOut();
+                                      if (mounted) {
+                                        Navigator.pop(
+                                            context); // Chiude il dialog
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginPage(), // Corretto l'indentazione
+                                          ),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content:
+                                              Text('Errore durante il logout'),
+                                          backgroundColor: Colors.red,
                                         ),
                                       );
                                     }
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content:
-                                            Text('Errore durante il logout'),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: const Text('Logout'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
+                                  },
+                                  child: const Text('Logout'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       body: _pages[_selectedIndex],
