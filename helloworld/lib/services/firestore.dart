@@ -43,8 +43,9 @@ class FirestoreService {
       if (!doc.exists) throw 'List not found';
 
       final data = doc.data() as Map<String, dynamic>;
-      if (data['userId'] != user.uid)
+      if (data['userId'] != user.uid) {
         throw 'You don\'t have permission to modify this list';
+      }
 
       await lists.doc(docID).update({
         'description': newDescription,
@@ -64,8 +65,9 @@ class FirestoreService {
       if (!doc.exists) throw 'List not found';
 
       final data = doc.data() as Map<String, dynamic>;
-      if (data['userId'] != user.uid)
+      if (data['userId'] != user.uid) {
         throw 'You don\'t have permission to delete this list';
+      }
 
       await lists.doc(docID).delete();
     } catch (e) {
